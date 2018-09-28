@@ -1,32 +1,57 @@
+const _element = Symbol();
+const _elements = Symbol();
+const _length = Symbol();
+
 function _(query) {
 	return new Underline(document.querySelectorAll(query));
 }
 
-var Underline = function(elements) {
-	this.elements = [].slice.call(elements);
-  this.length = this.elements.length;
-}
-
-Underline.prototype = {
-	elements: [],
-	length: 0,
-
-	toArray: function() {
+class Underline {  
+	constructor(elements) {
+		this[_elements] = [].slice.call(elements);
+  	this[_length] = this[_elements].length;
+	}
+  
+  toArray() {
 		return [].slice.call(this);
-	},
-	get: function(number) {
+	}
+  
+	get(number) {
 		if (number == null) {
-			return [].slice.call(this.elements);
+			return [].slice.call(this[_elements]);
 		}
 		if (number < 0) {
-    	return this[number + this.length];
+    	return this[number + this[_elements]];
     } else {
     	return this[number];
     }
-	},
-  each: function(callback) {
-  	for (var i in this.elements) {
-    	callback.call({element: this.elements[i]});
+	}
+  
+  each(callback) {
+  	for (var i in this[_elements]) {
+    	callback.call({element: new UnderlineElement(this[_elements][i])});
     }
   }
-};
+}
+
+class UnderlineElement {
+	constructor(element) {
+    this[_element] = element;
+  }
+  
+  html(htmlString) {
+		if (htmlString == null) {
+			return this[_element].innerHTML;
+		} else {
+    	this[_element].innerHTML = htmlString;
+    }
+	}
+  
+  text(textString) {
+		if (textString == null) {
+			return this[_element].innerText;
+		} else {
+    	this[_element].innerText = textString;
+    }
+	}
+}
