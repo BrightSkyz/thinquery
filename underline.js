@@ -1,5 +1,5 @@
-const _element = Symbol();
-const _elements = Symbol();
+var _element = Symbol();
+var _elements = Symbol();
 
 function _(query) {
   return new Underline(document.querySelectorAll(query));
@@ -7,11 +7,11 @@ function _(query) {
 
 class Underline {
   constructor(elements) {
-    this[_elements] = [];
-    for (var i in elements) {
-      this[_elements].push(new UnderlineElement(elements[i]));
-    }
-    this[_elements] = [].slice.call(elements);
+    var newElements = [];
+    elements.forEach(function(element){
+      newElements.push(new UnderlineElement(element));
+    })
+    this[_elements] = [].slice.call(newElements);
   }
 
   toArray() {
@@ -27,10 +27,26 @@ class Underline {
 
   each(callback) {
     for (var i in this[_elements]) {
-      callback.call({
-        element: this[_elements][i]
-      });
+      callback(this.get(i));
     }
+  }
+  
+  html(htmlString) {
+    this.each(function(element){
+      element.html(htmlString);
+    });
+  }
+  
+  text(textString) {
+    this.each(function(element){
+      element.html(textString);
+    });
+  }
+  
+  color(color) {
+    this.each(function(element){
+      element.color(color);
+    })
   }
 }
 
@@ -38,7 +54,7 @@ class UnderlineElement {
   constructor(element) {
     this[_element] = element;
   }
-
+  
   html(htmlString) {
     if (htmlString == null) {
       return this[_element].innerHTML;
@@ -52,6 +68,14 @@ class UnderlineElement {
       return this[_element].innerText;
     } else {
       this[_element].innerText = textString;
+    }
+  }
+  
+  color(color) {
+    if (color == null) {
+      return this[_element].style.color;
+    } else {
+      this[_element].style.color = color;
     }
   }
 }
